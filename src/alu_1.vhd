@@ -5,11 +5,9 @@ ENTITY alu_1 IS
     PORT (
         a : IN std_logic;
         b : IN std_logic;
-        a_invert : IN std_logic;
-        b_invert : IN std_logic;
         cin : IN std_logic;
         less : IN std_logic;
-        operation : IN std_logic_vector (1 DOWNTO 0);
+        operation : IN std_logic_vector (3 DOWNTO 0);
         cout : OUT std_logic;
         res : OUT std_logic
     );
@@ -44,7 +42,7 @@ BEGIN
         PORT MAP(
             input(0)(0) => a,
             input(1)(0) => not_a_res,
-            selector(0) => a_invert,
+            selector(0) => operation(3),
             output(0) => mux_a_res
         );
 
@@ -53,7 +51,7 @@ BEGIN
         PORT MAP(
             input(0)(0) => b,
             input(1)(0) => not_b_res,
-            selector(0) => b_invert,
+            selector(0) => operation(2),
             output(0) => mux_b_res
         );
 
@@ -86,7 +84,7 @@ BEGIN
             input(1)(0) => or_res,
             input(2)(0) => add_res,
             input(3)(0) => less,
-            selector => operation,
+            selector => operation (1 DOWNTO 0),
             output(0) => res
         );
 
