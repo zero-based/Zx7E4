@@ -3,9 +3,9 @@ USE ieee.std_logic_1164.ALL;
 
 ENTITY alu_1 IS
     PORT (
-        a: IN std_logic;
-        b: IN std_logic;
-        a_invert: IN std_logic;
+        a : IN std_logic;
+        b : IN std_logic;
+        a_invert : IN std_logic;
         b_invert : IN std_logic;
         cin : IN std_logic;
         less : IN std_logic;
@@ -40,21 +40,21 @@ BEGIN
         );
 
     mux_a : ENTITY work.mux
-        GENERIC MAP(SIZE => 1)
+        GENERIC MAP(SEL_COUNT => 1)
         PORT MAP(
-            input(0) => a,
-            input(1) => not_a_res,
+            input(0)(0) => a,
+            input(1)(0) => not_a_res,
             selector(0) => a_invert,
-            output => mux_a_res
+            output(0) => mux_a_res
         );
 
     mux_b : ENTITY work.mux
-        GENERIC MAP(SIZE => 1)
+        GENERIC MAP(SEL_COUNT => 1)
         PORT MAP(
-            input(0) => b,
-            input(1) => not_b_res,
+            input(0)(0) => b,
+            input(1)(0) => not_b_res,
             selector(0) => b_invert,
-            output => mux_b_res
+            output(0) => mux_b_res
         );
 
     a_and_b : ENTITY work.and_gate
@@ -82,12 +82,12 @@ BEGIN
 
     mux_4 : ENTITY work.mux
         PORT MAP(
-            input(0) => and_res,
-            input(1) => or_res,
-            input(2) => add_res,
-            input(3) => less,
+            input(0)(0) => and_res,
+            input(1)(0) => or_res,
+            input(2)(0) => add_res,
+            input(3)(0) => less,
             selector => operation,
-            output => res
+            output(0) => res
         );
 
 END behaviour;
