@@ -9,19 +9,19 @@ END decoder_tb;
 
 ARCHITECTURE tb OF decoder_tb IS
 
-  CONSTANT SIZE : NATURAL := 2;
-  SIGNAL input : std_logic_vector (SIZE - 1 DOWNTO 0);
-  SIGNAL output : std_logic_vector (2 ** SIZE - 1 DOWNTO 0);
+  CONSTANT TIME_SPAN : TIME := 20 ns;
+  CONSTANT N : NATURAL := 2;
 
-  TYPE test_case IS RECORD
-    input : std_logic_vector (SIZE - 1 DOWNTO 0);
-    output : std_logic_vector (2 ** SIZE - 1 DOWNTO 0);
+  TYPE test_t IS RECORD
+    input : std_logic_vector (N - 1 DOWNTO 0);
+    output : std_logic_vector (2 ** N - 1 DOWNTO 0);
   END RECORD;
 
-  TYPE test_case_array IS ARRAY (NATURAL RANGE <>) OF test_case;
+  SIGNAL sig : test_t;
 
-  CONSTANT time_span : TIME := 20 ns;
-  CONSTANT test_cases : test_case_array := (
+  TYPE test_array_t IS ARRAY (NATURAL RANGE <>) OF test_t;
+
+  CONSTANT tests : test_array_t := (
   ("00", "0001"),
   ("01", "0010"),
   ("10", "0100"),
@@ -30,24 +30,29 @@ ARCHITECTURE tb OF decoder_tb IS
 
 BEGIN
 
-  UUT : ENTITY work.decoder GENERIC MAP (SIZE => SIZE) PORT MAP (input => input, output => output);
+  UUT : ENTITY work.decoder
+    GENERIC MAP(N => N)
+    PORT MAP(
+      input => sig.input,
+      output => sig.output
+    );
 
   main : PROCESS
   BEGIN
 
     test_runner_setup(runner, runner_cfg);
 
-    FOR i IN test_cases'RANGE LOOP
+    FOR i IN tests'RANGE LOOP
 
-      input <= test_cases(i).input;
+      sig.input <= tests(i).input;
 
-      WAIT FOR time_span;
-      ASSERT (output = test_cases(i).output)
-      REPORT "test " & INTEGER'image(i) & " failed " SEVERITY error;
+      WAIT FOR TIME_SPAN;
+      ASSERT (sig.output = tests(i).output)
+      REPORT "test " & INTEGER'image(i) & " failed [output]" SEVERITY error;
 
     END LOOP;
 
-    WAIT FOR time_span;
+    WAIT FOR TIME_SPAN;
     test_runner_cleanup(runner);
     WAIT;
 

@@ -9,17 +9,21 @@ END full_adder_tb;
 
 ARCHITECTURE tb OF full_adder_tb IS
 
-  SIGNAL a, b, cin : std_logic;
-  SIGNAL cout, s : std_logic;
+  CONSTANT TIME_SPAN : TIME := 20 ns;
 
-  TYPE test_case IS RECORD
-    a, b, cin : std_logic;
-    s, cout : std_logic;
+  TYPE test_t IS RECORD
+    a : std_logic;
+    b : std_logic;
+    c_in : std_logic;
+    sum : std_logic;
+    c_out : std_logic;
   END RECORD;
 
-  TYPE test_case_array IS ARRAY (NATURAL RANGE <>) OF test_case;
-  CONSTANT time_span : TIME := 20 ns;
-  CONSTANT test_cases : test_case_array := (
+  TYPE test_array_t IS ARRAY (NATURAL RANGE <>) OF test_t;
+
+  SIGNAL sig : test_t;
+
+  CONSTANT tests : test_array_t := (
   ('0', '0', '0', '0', '0'),
   ('0', '0', '1', '1', '0'),
   ('0', '1', '0', '1', '0'),
@@ -32,29 +36,39 @@ ARCHITECTURE tb OF full_adder_tb IS
 
 BEGIN
 
-  UUT : ENTITY work.full_adder PORT MAP (a => a, b => b, cin => cin, s => s, cout => cout);
+  UUT : ENTITY work.full_adder
+    PORT MAP(
+      a => sig.a,
+      b => sig.b,
+      c_in => sig.c_in,
+      sum => sig.sum,
+      c_out => sig.c_out
+    );
+
   main : PROCESS
   BEGIN
 
     test_runner_setup(runner, runner_cfg);
 
-    FOR i IN test_cases'RANGE LOOP
+    FOR i IN tests'RANGE LOOP
 
-      a <= test_cases(i).a;
-      b <= test_cases(i).b;
-      cin <= test_cases(i).cin;
-      s <= test_cases(i).s;
-      cout <= test_cases(i).cout;
+      sig.a <= tests(i).a;
+      sig.b <= tests(i).b;
+      sig.c_in <= tests(i).c_in;
+      sig.sum <= tests(i).sum;
+      sig.c_out <= tests(i).c_out;
 
-      WAIT FOR time_span;
-      ASSERT (s = test_cases(i).s)
-      REPORT "test " & INTEGER'image(i) & " failed [BAD SUM]" SEVERITY error;
-      ASSERT (cout = test_cases(i).cout)
-      REPORT "test " & INTEGER'image(i) & " failed [BAD C.OUT]" SEVERITY error;
+      WAIT FOR TIME_SPAN;
+
+      ASSERT (sig.sum = tests(i).sum)
+      REPORT "test " & INTEGER'image(i) & " failed [sum]" SEVERITY error;
+
+      ASSERT (sig.c_out = tests(i).c_out)
+      REPORT "test " & INTEGER'image(i) & " failed [c_out]" SEVERITY error;
 
     END LOOP;
 
-    WAIT FOR time_span;
+    WAIT FOR TIME_SPAN;
     test_runner_cleanup(runner);
     WAIT;
 
