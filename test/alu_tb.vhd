@@ -1,6 +1,7 @@
 LIBRARY ieee;
 LIBRARY vunit_lib;
 USE ieee.std_logic_1164.ALL;
+USE work.timing.ALL;
 USE work.operation.ALL;
 CONTEXT vunit_lib.vunit_context;
 
@@ -10,15 +11,14 @@ END alu_tb;
 
 ARCHITECTURE tb OF alu_tb IS
 
-  CONSTANT TIME_SPAN : TIME := 20 ns;
-  CONSTANT BITS_COUNT : NATURAL := 4;
+  CONSTANT N : NATURAL := 4;
 
   TYPE test_t IS RECORD
-    a : std_logic_vector (BITS_COUNT - 1 DOWNTO 0);
-    b : std_logic_vector (BITS_COUNT - 1 DOWNTO 0);
+    a : std_logic_vector (N - 1 DOWNTO 0);
+    b : std_logic_vector (N - 1 DOWNTO 0);
     op : operation_t;
     c_in : std_logic;
-    data_out : std_logic_vector (BITS_COUNT - 1 DOWNTO 0);
+    res : std_logic_vector (N - 1 DOWNTO 0);
     cf : std_logic;
     zf : std_logic;
     vf : std_logic;
@@ -29,17 +29,17 @@ ARCHITECTURE tb OF alu_tb IS
   SIGNAL sig : test_t;
 
   CONSTANT tests : test_array_t := (
-  ("0101", "1010", "0000", '-', "0000", '-', '1', '-'), -- and
-  ("0101", "1010", "0001", '-', "1111", '-', '0', '-'), -- or
-  ("0000", "0000", "1100", '-', "1111", '-', '0', '-'), -- nor
-  ("0101", "1010", "0010", '0', "1111", '0', '0', '0'), -- add with no flags
-  ("1111", "1111", "0010", '0', "1110", '1', '0', '0'), -- add with carry flag
-  ("1000", "1000", "0010", '0', "0000", '1', '1', '1'), -- add with all flags
-  ("0010", "0001", "0110", '1', "0001", '0', '0', '0'), -- sub with no flags
-  ("0001", "0010", "0110", '1', "1111", '1', '0', '0'), -- sub with carry flag
-  ("1111", "1111", "0110", '1', "0000", '0', '1', '0'), -- sub with zero flag
-  ("0001", "0010", "0111", '1', "0001", '-', '0', '-'), -- set less than
-  ("0010", "0001", "0111", '1', "0000", '-', '1', '-') -- set less than
+  ("0101", "1010", AND_OP, '-', "0000", '-', '1', '-'), -- and
+  ("0101", "1010", OR_OP , '-', "1111", '-', '0', '-'), -- or
+  ("0000", "0000", NOR_OP, '-', "1111", '-', '0', '-'), -- nor
+  ("0101", "1010", ADD_OP, '0', "1111", '0', '0', '0'), -- add with no flags
+  ("1111", "1111", ADD_OP, '0', "1110", '1', '0', '0'), -- add with carry flag
+  ("1000", "1000", ADD_OP, '0', "0000", '1', '1', '1'), -- add with all flags
+  ("0010", "0001", SUB_OP, '1', "0001", '0', '0', '0'), -- sub with no flags
+  ("0001", "0010", SUB_OP, '1', "1111", '1', '0', '0'), -- sub with carry flag
+  ("1111", "1111", SUB_OP, '1', "0000", '0', '1', '0'), -- sub with zero flag
+  ("0001", "0010", SLT_OP, '1', "0001", '-', '0', '-'), -- set less than
+  ("0010", "0001", SLT_OP, '1', "0000", '-', '1', '-') -- set less than
   );
 
 BEGIN
@@ -50,7 +50,7 @@ BEGIN
       b => sig.b,
       op => sig.op,
       c_in => sig.c_in,
-      data_out => sig.data_out,
+      res => sig.res,
       cf => sig.cf,
       zf => sig.zf,
       vf => sig.vf
@@ -70,8 +70,8 @@ BEGIN
 
       WAIT FOR TIME_SPAN;
 
-      ASSERT (sig.data_out = tests(i).data_out OR tests(i).data_out = "----")
-      REPORT "test " & INTEGER'image(i) & " failed [data_out]" SEVERITY error;
+      ASSERT (sig.res = tests(i).res OR tests(i).res = "----")
+      REPORT "test " & INTEGER'image(i) & " failed [res]" SEVERITY error;
 
       ASSERT (sig.cf = tests(i).cf OR tests(i).cf = '-')
       REPORT "test " & INTEGER'image(i) & " failed [cf]" SEVERITY error;

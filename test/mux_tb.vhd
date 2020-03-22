@@ -1,6 +1,7 @@
 LIBRARY ieee;
 LIBRARY vunit_lib;
 USE ieee.std_logic_1164.ALL;
+USE work.timing.ALL;
 USE work.vector_bus.ALL;
 CONTEXT vunit_lib.vunit_context;
 
@@ -10,7 +11,6 @@ END mux_tb;
 
 ARCHITECTURE tb OF mux_tb IS
 
-  CONSTANT TIME_SPAN : TIME := 20 ns;
   CONSTANT N : NATURAL := 2;
   CONSTANT SIZE : NATURAL := 4;
 

@@ -11,10 +11,10 @@ ENTITY register_file IS
 
   PORT (
     clk : IN std_logic;
-    wr_en : IN std_logic;
-    wr_num : IN std_logic_vector (N - 1 DOWNTO 0);
-    rd_num_1 : IN std_logic_vector (N - 1 DOWNTO 0);
-    rd_num_2 : IN std_logic_vector (N - 1 DOWNTO 0);
+    wr_ena : IN std_logic;
+    wr_sel : IN std_logic_vector (N - 1 DOWNTO 0);
+    rd_sel_1 : IN std_logic_vector (N - 1 DOWNTO 0);
+    rd_sel_2 : IN std_logic_vector (N - 1 DOWNTO 0);
     wr : IN std_logic_vector (SIZE - 1 DOWNTO 0);
     rd_1 : OUT std_logic_vector (SIZE - 1 DOWNTO 0);
     rd_2 : OUT std_logic_vector (SIZE - 1 DOWNTO 0)
@@ -31,13 +31,13 @@ BEGIN
   decoder : ENTITY work.decoder
     GENERIC MAP(N => N)
     PORT MAP(
-      input => wr_num,
+      input => wr_sel,
       output => dec_bus
     );
 
-  bank : FOR i IN 0 TO 2 ** N - 1 GENERATE
+  gen_reg : FOR i IN 0 TO 2 ** N - 1 GENERATE
 
-    and_bus(i) <= wr_en AND dec_bus(i);
+    and_bus(i) <= wr_ena AND dec_bus(i);
 
     reg : ENTITY work.reg
       PORT MAP(
@@ -48,7 +48,7 @@ BEGIN
         output => reg_bus(i)
       );
 
-  END GENERATE;
+  END GENERATE gen_reg;
 
   mux_1 : ENTITY work.mux
     GENERIC MAP(
@@ -57,7 +57,7 @@ BEGIN
     )
     PORT MAP(
       input => reg_bus,
-      sel => rd_num_1,
+      sel => rd_sel_1,
       output => rd_1
     );
 
@@ -68,7 +68,7 @@ BEGIN
     )
     PORT MAP(
       input => reg_bus,
-      sel => rd_num_2,
+      sel => rd_sel_2,
       output => rd_2
     );
 

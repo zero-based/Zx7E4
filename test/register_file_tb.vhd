@@ -1,6 +1,7 @@
 LIBRARY ieee;
 LIBRARY vunit_lib;
 USE ieee.std_logic_1164.ALL;
+USE work.timing.ALL;
 CONTEXT vunit_lib.vunit_context;
 
 ENTITY register_file_tb IS
@@ -9,15 +10,14 @@ END register_file_tb;
 
 ARCHITECTURE tb OF register_file_tb IS
 
-  CONSTANT TIME_SPAN : TIME := 20 ns;
   CONSTANT N : NATURAL := 5;
   CONSTANT SIZE : NATURAL := 32;
 
   TYPE test_t IS RECORD
-    wr_en : std_logic;
-    wr_num : std_logic_vector (N - 1 DOWNTO 0);
-    rd_num_1 : std_logic_vector (N - 1 DOWNTO 0);
-    rd_num_2 : std_logic_vector (N - 1 DOWNTO 0);
+    wr_ena : std_logic;
+    wr_sel : std_logic_vector (N - 1 DOWNTO 0);
+    rd_sel_1 : std_logic_vector (N - 1 DOWNTO 0);
+    rd_sel_2 : std_logic_vector (N - 1 DOWNTO 0);
     wr : std_logic_vector (SIZE - 1 DOWNTO 0);
     rd_1 : std_logic_vector (SIZE - 1 DOWNTO 0);
     rd_2 : std_logic_vector (SIZE - 1 DOWNTO 0);
@@ -109,10 +109,10 @@ BEGIN
     )
     PORT MAP(
       clk => clk,
-      wr_en => sig.wr_en,
-      wr_num => sig.wr_num,
-      rd_num_1 => sig.rd_num_1,
-      rd_num_2 => sig.rd_num_2,
+      wr_ena => sig.wr_ena,
+      wr_sel => sig.wr_sel,
+      rd_sel_1 => sig.rd_sel_1,
+      rd_sel_2 => sig.rd_sel_2,
       wr => sig.wr,
       rd_1 => sig.rd_1,
       rd_2 => sig.rd_2
@@ -132,10 +132,10 @@ BEGIN
 
     FOR i IN tests'RANGE LOOP
 
-      sig.wr_en <= tests(i).wr_en;
-      sig.wr_num <= tests(i).wr_num;
-      sig.rd_num_1 <= tests(i).rd_num_1;
-      sig.rd_num_2 <= tests(i).rd_num_2;
+      sig.wr_ena <= tests(i).wr_ena;
+      sig.wr_sel <= tests(i).wr_sel;
+      sig.rd_sel_1 <= tests(i).rd_sel_1;
+      sig.rd_sel_2 <= tests(i).rd_sel_2;
       sig.wr <= tests(i).wr;
 
       WAIT FOR TIME_SPAN;

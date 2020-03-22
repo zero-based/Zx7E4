@@ -1,6 +1,7 @@
 LIBRARY ieee;
 LIBRARY vunit_lib;
 USE ieee.std_logic_1164.ALL;
+USE work.timing.ALL;
 CONTEXT vunit_lib.vunit_context;
 
 ENTITY register_tb IS
@@ -9,7 +10,6 @@ END register_tb;
 
 ARCHITECTURE tb OF register_tb IS
 
-  CONSTANT TIME_SPAN : TIME := 20 ns;
   CONSTANT SIZE : INTEGER := 4;
 
   TYPE test_t IS RECORD
