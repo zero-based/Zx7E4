@@ -92,7 +92,8 @@ BEGIN
             less => less,
             operation => operation,
             cout => cout,
-            res => res
+            res => res,
+            set => OPEN
         );
 
     main : PROCESS
