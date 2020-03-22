@@ -9,7 +9,8 @@ ENTITY alu_1 IS
         less : IN std_logic;
         operation : IN std_logic_vector (3 DOWNTO 0);
         cout : OUT std_logic;
-        res : OUT std_logic
+        res : OUT std_logic;
+        set : OUT std_logic
     );
 END alu_1;
 
@@ -87,5 +88,7 @@ BEGIN
             selector => operation (1 DOWNTO 0),
             output(0) => res
         );
+
+    set <= add_res;
 
 END behaviour;
