@@ -1,5 +1,6 @@
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
+USE work.operation.ALL;
 
 ENTITY alu IS
 
@@ -8,45 +9,47 @@ ENTITY alu IS
   );
 
   PORT (
-    data_1 : IN std_logic_vector(BITS_COUNT - 1 DOWNTO 0);
-    data_2 : IN std_logic_vector(BITS_COUNT - 1 DOWNTO 0);
-    operation : IN std_logic_vector(3 DOWNTO 0);
-    cin : IN std_logic;
-    data_out : OUT std_logic_vector(BITS_COUNT - 1 DOWNTO 0);
-    cflag : OUT std_logic := '0';
-    zflag : OUT std_logic := '0';
-    oflag : OUT std_logic := '0'
+    a : IN std_logic_vector (BITS_COUNT - 1 DOWNTO 0);
+    b : IN std_logic_vector (BITS_COUNT - 1 DOWNTO 0);
+    op : IN operation_t;
+    c_in : IN std_logic;
+    data_out : OUT std_logic_vector (BITS_COUNT - 1 DOWNTO 0);
+    cf : OUT std_logic := '0';
+    zf : OUT std_logic := '0';
+    vf : OUT std_logic := '0'
   );
 
 END alu;
 
 ARCHITECTURE behaviour OF alu IS
 
+  CONSTANT sub_op : operation_t := "0110";
+
   SIGNAL less_first : std_logic;
-  SIGNAL sflag : std_logic;
-  SIGNAL inverted_cflag : std_logic;
+  SIGNAL sf : std_logic;
+  SIGNAL cf_inv : std_logic;
   SIGNAL io_bus : std_logic_vector (BITS_COUNT - 1 DOWNTO 0);
 
   FUNCTION or_reduce(vec : std_logic_vector) RETURN std_logic IS
-    VARIABLE result : std_logic := '0';
+    VARIABLE res : std_logic := '0';
   BEGIN
     FOR i IN vec'RANGE LOOP
-      result := result OR vec(i);
-      EXIT WHEN result = '1';
+      res := res OR vec(i);
+      EXIT WHEN res = '1';
     END LOOP;
-    RETURN result;
+    RETURN res;
   END or_reduce;
 
 BEGIN
 
   first_alu_1 : ENTITY work.alu_1
     PORT MAP(
-      a => data_1(0),
-      b => data_2(0),
-      operation => operation(3 DOWNTO 0),
-      cin => cin,
-      less => less_first,
-      cout => io_bus(0),
+      a => a(0),
+      b => b(0),
+      op => op(3 DOWNTO 0),
+      c_in => c_in,
+      less => vf XOR sf,
+      c_out => io_bus(0),
       res => data_out(0),
       set => OPEN
     );
@@ -54,12 +57,12 @@ BEGIN
   gen_alu : FOR i IN 1 TO BITS_COUNT - 2 GENERATE
     alu_1 : ENTITY work.alu_1
       PORT MAP(
-        a => data_1(i),
-        b => data_2(i),
-        operation => operation(3 DOWNTO 0),
-        cin => io_bus(i - 1),
+        a => a(i),
+        b => b(i),
+        op => op(3 DOWNTO 0),
+        c_in => io_bus(i - 1),
         less => '0',
-        cout => io_bus(i),
+        c_out => io_bus(i),
         res => data_out(i),
         set => OPEN
       );
@@ -67,21 +70,20 @@ BEGIN
 
   last_alu_1 : ENTITY work.alu_1
     PORT MAP(
-      a => data_1(BITS_COUNT - 1),
-      b => data_2(BITS_COUNT - 1),
-      operation => operation(3 DOWNTO 0),
-      cin => io_bus(BITS_COUNT - 2),
+      a => a(BITS_COUNT - 1),
+      b => b(BITS_COUNT - 1),
+      op => op(3 DOWNTO 0),
+      c_in => io_bus(BITS_COUNT - 2),
       less => '0',
-      cout => io_bus(BITS_COUNT - 1),
+      c_out => io_bus(BITS_COUNT - 1),
       res => data_out(BITS_COUNT - 1),
-      set => sflag
+      set => sf
     );
 
-  inverted_cflag <= io_bus(BITS_COUNT - 1) XOR '1';
-  zflag <= NOT or_reduce(data_out);
-  oflag <= io_bus(BITS_COUNT - 2) XOR io_bus(BITS_COUNT - 1);
-  cflag <= inverted_cflag WHEN operation = "0110" ELSE
+  cf_inv <= io_bus(BITS_COUNT - 1) XOR '1';
+  zf <= NOT or_reduce(data_out);
+  vf <= io_bus(BITS_COUNT - 2) XOR io_bus(BITS_COUNT - 1);
+  cf <= cf_inv WHEN op = sub_op ELSE
     io_bus(BITS_COUNT - 1);
-  less_first <= oflag XOR sflag;
 
 END behaviour;
