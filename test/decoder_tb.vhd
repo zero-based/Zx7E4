@@ -1,6 +1,7 @@
 LIBRARY ieee;
 LIBRARY vunit_lib;
 USE ieee.std_logic_1164.ALL;
+USE work.timing.ALL;
 CONTEXT vunit_lib.vunit_context;
 
 ENTITY decoder_tb IS
@@ -9,7 +10,6 @@ END decoder_tb;
 
 ARCHITECTURE tb OF decoder_tb IS
 
-  CONSTANT TIME_SPAN : TIME := 20 ns;
   CONSTANT N : NATURAL := 2;
 
   TYPE test_t IS RECORD

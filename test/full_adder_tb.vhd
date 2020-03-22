@@ -1,6 +1,7 @@
 LIBRARY ieee;
 LIBRARY vunit_lib;
 USE ieee.std_logic_1164.ALL;
+USE work.timing.ALL;
 CONTEXT vunit_lib.vunit_context;
 
 ENTITY full_adder_tb IS
@@ -8,8 +9,6 @@ ENTITY full_adder_tb IS
 END full_adder_tb;
 
 ARCHITECTURE tb OF full_adder_tb IS
-
-  CONSTANT TIME_SPAN : TIME := 20 ns;
 
   TYPE test_t IS RECORD
     a : std_logic;
