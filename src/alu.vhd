@@ -3,11 +3,7 @@ USE ieee.std_logic_1164.ALL;
 USE work.operation.ALL;
 
 ENTITY alu IS
-
-  GENERIC (
-    N : NATURAL := 4
-  );
-
+  GENERIC (N : NATURAL := 4);
   PORT (
     a : IN std_logic_vector (N - 1 DOWNTO 0);
     b : IN std_logic_vector (N - 1 DOWNTO 0);
@@ -18,13 +14,11 @@ ENTITY alu IS
     zf : OUT std_logic := '0';
     vf : OUT std_logic := '0'
   );
-
 END alu;
 
 ARCHITECTURE behaviour OF alu IS
 
   SIGNAL sf : std_logic;
-  SIGNAL cf_inv : std_logic;
   SIGNAL io_bus : std_logic_vector (N - 1 DOWNTO 0);
 
   FUNCTION or_reduce(vec : std_logic_vector) RETURN std_logic IS
@@ -79,9 +73,7 @@ BEGIN
 
   zf <= NOT or_reduce(res);
   vf <= io_bus(N - 2) XOR io_bus(N - 1);
-
-  cf_inv <= io_bus(N - 1) XOR '1';
-  cf <= cf_inv WHEN op = SUB_OP ELSE
+  cf <= NOT io_bus(N - 1) WHEN op = SUB_OP ELSE -- invert carry flag for sub operations
     io_bus(N - 1);
 
 END behaviour;
