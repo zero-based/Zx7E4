@@ -19,6 +19,7 @@ ARCHITECTURE behaviour OF alu_1 IS
 
   SIGNAL mux_a_res : std_logic;
   SIGNAL mux_b_res : std_logic;
+  SIGNAL adder_res : std_logic;
 
 BEGIN
 
@@ -45,7 +46,7 @@ BEGIN
       a => mux_a_res,
       b => mux_b_res,
       c_in => c_in,
-      sum => set,
+      sum => adder_res,
       c_out => c_out
     );
 
@@ -53,10 +54,12 @@ BEGIN
     PORT MAP(
       input(0) => mux_a_res AND mux_b_res,
       input(1) => mux_a_res OR mux_b_res,
-      input(2) => set,
+      input(2) => adder_res,
       input(3) => less,
       sel => op (1 DOWNTO 0),
       output(0) => res
     );
+
+  set <= adder_res;
 
 END behaviour;
