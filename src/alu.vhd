@@ -21,16 +21,6 @@ ARCHITECTURE behaviour OF alu IS
   SIGNAL sf : std_logic;
   SIGNAL io_bus : std_logic_vector (N - 1 DOWNTO 0);
 
-  FUNCTION or_reduce(vec : std_logic_vector) RETURN std_logic IS
-    VARIABLE total : std_logic := '0';
-  BEGIN
-    FOR i IN vec'RANGE LOOP
-      total := total OR vec(i);
-      EXIT WHEN total = '1';
-    END LOOP;
-    RETURN total;
-  END or_reduce;
-
 BEGIN
 
   first : ENTITY work.alu_1
@@ -71,9 +61,8 @@ BEGIN
       set => sf
     );
 
-  zf <= NOT or_reduce(res);
+  cf <= NOT io_bus(N - 1) WHEN op = SUB_OP ELSE io_bus(N - 1); -- invert carry flag for sub operations
+  zf <= '1' WHEN res = (res'RANGE => '0') ELSE '0';
   vf <= io_bus(N - 2) XOR io_bus(N - 1);
-  cf <= NOT io_bus(N - 1) WHEN op = SUB_OP ELSE -- invert carry flag for sub operations
-    io_bus(N - 1);
 
 END behaviour;
