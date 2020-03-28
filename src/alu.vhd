@@ -19,7 +19,9 @@ END alu;
 ARCHITECTURE behaviour OF alu IS
 
   SIGNAL sf : std_logic;
-  SIGNAL io_bus : std_logic_vector (N - 1 DOWNTO 0);
+  SIGNAL ci_x_co : std_logic;
+  SIGNAL c_bus : std_logic_vector (N - 1 DOWNTO 0);
+  SIGNAL tmp : std_logic_vector (N - 1 DOWNTO 0);
 
 BEGIN
 
@@ -29,9 +31,9 @@ BEGIN
       b => b(0),
       op => op(3 DOWNTO 0),
       c_in => c_in,
-      less => vf XOR sf,
-      c_out => io_bus(0),
-      res => res(0),
+      less => ci_x_co XOR sf,
+      c_out => c_bus(0),
+      res => tmp(0),
       set => OPEN
     );
 
@@ -41,10 +43,10 @@ BEGIN
         a => a(i),
         b => b(i),
         op => op(3 DOWNTO 0),
-        c_in => io_bus(i - 1),
+        c_in => c_bus(i - 1),
         less => '0',
-        c_out => io_bus(i),
-        res => res(i),
+        c_out => c_bus(i),
+        res => tmp(i),
         set => OPEN
       );
   END GENERATE gen_alu;
@@ -54,15 +56,18 @@ BEGIN
       a => a(N - 1),
       b => b(N - 1),
       op => op(3 DOWNTO 0),
-      c_in => io_bus(N - 2),
+      c_in => c_bus(N - 2),
       less => '0',
-      c_out => io_bus(N - 1),
-      res => res(N - 1),
+      c_out => c_bus(N - 1),
+      res => tmp(N - 1),
       set => sf
     );
 
-  cf <= NOT io_bus(N - 1) WHEN op = SUB_OP ELSE io_bus(N - 1); -- invert carry flag for sub operations
-  zf <= '1' WHEN res = (res'RANGE => '0') ELSE '0';
-  vf <= io_bus(N - 2) XOR io_bus(N - 1);
+  res <= tmp;
+  ci_x_co <= c_bus(N - 2) XOR c_bus(N - 1);
+
+  zf <= '1' WHEN tmp = (tmp'RANGE => '0') ELSE '0';
+  cf <= NOT c_bus(N - 1) WHEN op = SUB_OP ELSE c_bus(N - 1); -- invert carry flag for sub operations
+  vf <= ci_x_co;
 
 END behaviour;
