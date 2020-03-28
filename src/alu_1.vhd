@@ -25,8 +25,8 @@ BEGIN
   mux_a : ENTITY work.mux
     GENERIC MAP(N => 1)
     PORT MAP(
-      input(0)(0) => a,
-      input(1)(0) => NOT a,
+      input(0) => a,
+      input(1) => NOT a,
       sel(0) => op(3),
       output(0) => mux_a_res
     );
@@ -34,8 +34,8 @@ BEGIN
   mux_b : ENTITY work.mux
     GENERIC MAP(N => 1)
     PORT MAP(
-      input(0)(0) => b,
-      input(1)(0) => NOT b,
+      input(0) => b,
+      input(1) => NOT b,
       sel(0) => op(2),
       output(0) => mux_b_res
     );
@@ -51,10 +51,10 @@ BEGIN
 
   mux_4 : ENTITY work.mux
     PORT MAP(
-      input(0)(0) => mux_a_res AND mux_b_res,
-      input(1)(0) => mux_a_res OR mux_b_res,
-      input(2)(0) => set,
-      input(3)(0) => less,
+      input(0) => mux_a_res AND mux_b_res,
+      input(1) => mux_a_res OR mux_b_res,
+      input(2) => set,
+      input(3) => less,
       sel => op (1 DOWNTO 0),
       output(0) => res
     );

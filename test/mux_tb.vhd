@@ -2,7 +2,6 @@ LIBRARY ieee;
 LIBRARY vunit_lib;
 USE ieee.std_logic_1164.ALL;
 USE work.timing.ALL;
-USE work.vector_bus.ALL;
 CONTEXT vunit_lib.vunit_context;
 
 ENTITY mux_tb IS
@@ -15,7 +14,7 @@ ARCHITECTURE tb OF mux_tb IS
   CONSTANT SIZE : NATURAL := 4;
 
   TYPE test_t IS RECORD
-    input : vector_bus_t (0 TO 2 ** N - 1)(SIZE - 1 DOWNTO 0);
+    input : std_logic_vector ((2 ** N) * SIZE - 1 DOWNTO 0);
     sel : std_logic_vector (N - 1 DOWNTO 0);
     output : std_logic_vector (SIZE - 1 DOWNTO 0);
   END RECORD;
@@ -25,10 +24,10 @@ ARCHITECTURE tb OF mux_tb IS
   SIGNAL sig : test_t;
 
   CONSTANT tests : test_array_t := (
-  (("0000", "0101", "1111", "1010"), "00", "0000"),
-  (("0000", "0101", "1111", "1010"), "01", "0101"),
-  (("0000", "0101", "1111", "1010"), "10", "1111"),
-  (("0000", "0101", "1111", "1010"), "11", "1010")
+  ("1010111101010000", "00", "0000"),
+  ("1010111101010000", "01", "0101"),
+  ("1010111101010000", "10", "1111"),
+  ("1010111101010000", "11", "1010")
   );
 
 BEGIN
