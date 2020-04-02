@@ -1,5 +1,6 @@
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
+USE work.vector_bus.ALL;
 
 ENTITY register_file IS
 
@@ -22,7 +23,7 @@ ENTITY register_file IS
 END register_file;
 
 ARCHITECTURE behaviour OF register_file IS
-  SIGNAL reg_bus : std_logic_vector ((2 ** N) * SIZE - 1 DOWNTO 0);
+  SIGNAL reg_bus : vector_bus_t (0 TO 2 ** N - 1)(SIZE - 1 DOWNTO 0);
   SIGNAL dec_bus : std_logic_vector (2 ** N - 1 DOWNTO 0);
   SIGNAL and_bus : std_logic_vector (2 ** N - 1 DOWNTO 0);
 BEGIN
@@ -44,7 +45,7 @@ BEGIN
         ld => and_bus(i),
         clr => '0',
         input => wr,
-        output => reg_bus((i + 1) * SIZE - 1 DOWNTO i * SIZE)
+        output => reg_bus(i)
       );
 
   END GENERATE gen_reg;
