@@ -19,15 +19,14 @@ ARCHITECTURE behaviour OF alu_1 IS
 
   SIGNAL mux_a_res : std_logic;
   SIGNAL mux_b_res : std_logic;
-  SIGNAL adder_res : std_logic;
 
 BEGIN
 
   mux_a : ENTITY work.mux
     GENERIC MAP(N => 1)
     PORT MAP(
-      input(0) => a,
-      input(1) => NOT a,
+      input(0)(0) => a,
+      input(1)(0) => NOT a,
       sel(0) => op(3),
       output(0) => mux_a_res
     );
@@ -35,8 +34,8 @@ BEGIN
   mux_b : ENTITY work.mux
     GENERIC MAP(N => 1)
     PORT MAP(
-      input(0) => b,
-      input(1) => NOT b,
+      input(0)(0) => b,
+      input(1)(0) => NOT b,
       sel(0) => op(2),
       output(0) => mux_b_res
     );
@@ -46,20 +45,18 @@ BEGIN
       a => mux_a_res,
       b => mux_b_res,
       c_in => c_in,
-      sum => adder_res,
+      sum => set,
       c_out => c_out
     );
 
   mux_4 : ENTITY work.mux
     PORT MAP(
-      input(0) => mux_a_res AND mux_b_res,
-      input(1) => mux_a_res OR mux_b_res,
-      input(2) => adder_res,
-      input(3) => less,
+      input(0)(0) => mux_a_res AND mux_b_res,
+      input(1)(0) => mux_a_res OR mux_b_res,
+      input(2)(0) => set,
+      input(3)(0) => less,
       sel => op (1 DOWNTO 0),
       output(0) => res
     );
-
-  set <= adder_res;
 
 END behaviour;
