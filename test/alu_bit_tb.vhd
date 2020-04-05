@@ -5,11 +5,11 @@ USE work.timing.ALL;
 USE work.operation.ALL;
 CONTEXT vunit_lib.vunit_context;
 
-ENTITY alu_1_tb IS
+ENTITY alu_bit_tb IS
   GENERIC (runner_cfg : STRING);
-END alu_1_tb;
+END alu_bit_tb;
 
-ARCHITECTURE tb OF alu_1_tb IS
+ARCHITECTURE tb OF alu_bit_tb IS
 
   TYPE test_t IS RECORD
     a : std_logic;
@@ -87,7 +87,7 @@ ARCHITECTURE tb OF alu_1_tb IS
 
 BEGIN
 
-  UUT : ENTITY work.alu_1
+  UUT : ENTITY work.alu_bit
     PORT MAP(
       a => sig.a,
       b => sig.b,
