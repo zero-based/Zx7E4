@@ -5,13 +5,13 @@ USE work.timing.ALL;
 USE work.operation.ALL;
 CONTEXT vunit_lib.vunit_context;
 
-ENTITY alu_tb IS
+ENTITY alu_32_tb IS
   GENERIC (runner_cfg : STRING);
-END alu_tb;
+END alu_32_tb;
 
-ARCHITECTURE tb OF alu_tb IS
+ARCHITECTURE tb OF alu_32_tb IS
 
-  CONSTANT N : NATURAL := 4;
+  CONSTANT N : NATURAL := 32;
 
   TYPE test_t IS RECORD
     a : std_logic_vector (N - 1 DOWNTO 0);
@@ -29,22 +29,19 @@ ARCHITECTURE tb OF alu_tb IS
   SIGNAL sig : test_t;
 
   CONSTANT tests : test_array_t := (
-  ("0101", "1010", AND_OP, '-', "0000", '-', '1', '-'), -- and
-  ("0101", "1010", OR_OP , '-', "1111", '-', '0', '-'), -- or
-  ("0000", "0000", NOR_OP, '-', "1111", '-', '0', '-'), -- nor
-  ("0101", "1010", ADD_OP, '0', "1111", '0', '0', '0'), -- add with no flags
-  ("1111", "1111", ADD_OP, '0', "1110", '1', '0', '0'), -- add with carry flag
-  ("1000", "1000", ADD_OP, '0', "0000", '1', '1', '1'), -- add with all flags
-  ("0010", "0001", SUB_OP, '1', "0001", '0', '0', '0'), -- sub with no flags
-  ("0001", "0010", SUB_OP, '1', "1111", '1', '0', '0'), -- sub with carry flag
-  ("1111", "1111", SUB_OP, '1', "0000", '0', '1', '0'), -- sub with zero flag
-  ("0001", "0010", SLT_OP, '1', "0001", '-', '0', '-'), -- set less than
-  ("0010", "0001", SLT_OP, '1', "0000", '-', '1', '-') -- set less than
+  (X"C0000000", X"A0000000", AND_OP, '-', X"80000000", '-', '0', '-'),
+  (X"C0000000", X"A0000000", OR_OP , '-', X"E0000000", '-', '0', '-'),
+  (X"70000000", X"60000000", ADD_OP, '0', X"D0000000", '0', '0', '1'),
+  (X"F0000000", X"10000000", ADD_OP, '0', X"00000000", '1', '1', '0'),
+  (X"00000007", X"00000006", SUB_OP, '1', X"00000001", '0', '0', '0'),
+  (X"00000006", X"00000007", SUB_OP, '1', X"FFFFFFFF", '1', '0', '0'),
+  (X"FFFFFFF8", X"00000001", SUB_OP, '1', X"FFFFFFF7", '0', '0', '0')
   );
 
 BEGIN
 
   UUT : ENTITY work.alu
+    GENERIC MAP(N => N)
     PORT MAP(
       a => sig.a,
       b => sig.b,
@@ -70,7 +67,7 @@ BEGIN
 
       WAIT FOR TIME_SPAN;
 
-      ASSERT (sig.res = tests(i).res OR tests(i).res = "----")
+      ASSERT (sig.res = tests(i).res OR tests(i).res = X"--------")
       REPORT "test " & INTEGER'image(i) & " failed [res]" SEVERITY error;
 
       ASSERT (sig.cf = tests(i).cf OR tests(i).cf = '-')
