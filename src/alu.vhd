@@ -61,7 +61,7 @@ BEGIN
       set => sf
     );
 
-  cf <= NOT io_bus(N - 1) WHEN op = SUB_OP ELSE io_bus(N - 1); -- invert carry flag for sub operations
+  cf <= io_bus(N - 1);
   zf <= '1' WHEN res = (res'RANGE => '0') ELSE '0';
   vf <= io_bus(N - 2) XOR io_bus(N - 1);
 

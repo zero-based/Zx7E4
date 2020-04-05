@@ -35,9 +35,9 @@ ARCHITECTURE tb OF alu_4_tb IS
   ("0101", "1010", ADD_OP, '0', "1111", '0', '0', '0'), -- add with no flags
   ("1111", "1111", ADD_OP, '0', "1110", '1', '0', '0'), -- add with carry flag
   ("1000", "1000", ADD_OP, '0', "0000", '1', '1', '1'), -- add with all flags
-  ("0010", "0001", SUB_OP, '1', "0001", '0', '0', '0'), -- sub with no flags
-  ("0001", "0010", SUB_OP, '1', "1111", '1', '0', '0'), -- sub with carry flag
-  ("1111", "1111", SUB_OP, '1', "0000", '0', '1', '0'), -- sub with zero flag
+  ("0001", "0010", SUB_OP, '1', "1111", '0', '0', '0'), -- sub with no flags
+  ("0010", "0001", SUB_OP, '1', "0001", '1', '0', '0'), -- sub with carry flag
+  ("1111", "1111", SUB_OP, '1', "0000", '1', '1', '0'), -- sub with zero flag
   ("0001", "0010", SLT_OP, '1', "0001", '-', '0', '-'), -- set less than
   ("0010", "0001", SLT_OP, '1', "0000", '-', '1', '-') -- set less than
   );
