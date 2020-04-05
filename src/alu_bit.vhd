@@ -2,7 +2,7 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE work.operation.ALL;
 
-ENTITY alu_1 IS
+ENTITY alu_bit IS
   PORT (
     a : IN std_logic;
     b : IN std_logic;
@@ -13,9 +13,9 @@ ENTITY alu_1 IS
     res : OUT std_logic;
     set : OUT std_logic
   );
-END alu_1;
+END alu_bit;
 
-ARCHITECTURE behaviour OF alu_1 IS
+ARCHITECTURE behaviour OF alu_bit IS
 
   SIGNAL mux_a_res : std_logic;
   SIGNAL mux_b_res : std_logic;

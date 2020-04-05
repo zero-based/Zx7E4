@@ -23,7 +23,7 @@ ARCHITECTURE behaviour OF alu IS
 
 BEGIN
 
-  first : ENTITY work.alu_1
+  first : ENTITY work.alu_bit
     PORT MAP(
       a => a(0),
       b => b(0),
@@ -36,7 +36,7 @@ BEGIN
     );
 
   gen_alu : FOR i IN 1 TO N - 2 GENERATE
-    mid : ENTITY work.alu_1
+    mid : ENTITY work.alu_bit
       PORT MAP(
         a => a(i),
         b => b(i),
@@ -49,7 +49,7 @@ BEGIN
       );
   END GENERATE gen_alu;
 
-  last : ENTITY work.alu_1
+  last : ENTITY work.alu_bit
     PORT MAP(
       a => a(N - 1),
       b => b(N - 1),
